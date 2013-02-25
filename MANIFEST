@@ -1,0 +1,8 @@
+MANIFEST
+META.yml
+Makefile.PL
+README.md
+dist.ini
+lib/HTML/Meta/Robots.pm
+t/001-base.t
+t/002-simple.t
