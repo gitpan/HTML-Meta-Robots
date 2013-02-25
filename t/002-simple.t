@@ -97,14 +97,14 @@ use HTML::Meta::Robots;
 {
   my $robots = HTML::Meta::Robots->new;
   is(
-    $robots->open_directory_project(0)->content,
+    $robots->odp(0)->content,
     'index,follow,archive,noodp,ydir,snippet',
-    'open_directory_project(0) robots content'
+    'odp(0) robots content'
   );
   is(
-    $robots->open_directory_project(1)->content,
+    $robots->odp(1)->content,
     'index,follow,archive,odp,ydir,snippet',
-    'open_directory_project(1) robots content'
+    'odp(1) robots content'
   );
 }
 
@@ -113,14 +113,14 @@ use HTML::Meta::Robots;
 {
   my $robots = HTML::Meta::Robots->new;
   is(
-    $robots->yahoo(0)->content,
+    $robots->ydir(0)->content,
     'index,follow,archive,odp,noydir,snippet',
-    'yahoo(0) robots content'
+    'ydir(0) robots content'
   );
   is(
-    $robots->yahoo(1)->content,
+    $robots->ydir(1)->content,
     'index,follow,archive,odp,ydir,snippet',
-    'yahoo(1) robots content'
+    'ydir(1) robots content'
   );
 }
 

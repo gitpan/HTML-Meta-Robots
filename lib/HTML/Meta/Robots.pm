@@ -9,90 +9,88 @@ package HTML::Meta::Robots;
 use strict;
 use warnings FATAL => 'all';
 use utf8;
-use version 0.77; our $VERSION = version->new('v0.1');
+use version 0.77; our $VERSION = version->new('v0.2');
+
+############################################################################
+# Register accessor methods.
+BEGIN {
+  no strict 'refs';  ## no critic (ProhibitNoStrict ProhibitProlongedStrictureOverride)
+  use Carp qw( carp );
+
+  my @simple_accessors     = qw( follow archive odp ydir snippet );
+  my %deprecated_accessors = (
+    open_directory_project => 'odp',
+    yahoo                  => 'ydir',
+  );
+
+  # Register simple accessors which only can get/set boolean values.
+  foreach my $accessor (@simple_accessors) {
+    *{"HTML::Meta::Robots::$accessor"} = sub {
+      my ( $self, @params ) = @_;
+      $self->_accessor( $accessor, @params );
+    };
+  }
+
+  # Register index accessor which also sets simple accessors.
+  *{'HTML::Meta::Robots::index'} = sub {
+    my ( $self, @params ) = @_;
+    if ( scalar @params ) {
+      $self->_accessor( $_, @params ) for @simple_accessors;
+    }
+    $self->_accessor( 'index', @params );
+  };
+
+  # Register DEPRECATED accessors.
+  foreach my $accessor ( keys %deprecated_accessors ) {
+    *{"HTML::Meta::Robots::$accessor"} = sub {
+      my ( $self, @params ) = @_;
+      carp sprintf
+        q{Usage of %s->%s is DEPRECATED and will be removed in future! Use %s->%s instead},
+        __PACKAGE__, $accessor,
+        __PACKAGE__, $deprecated_accessors{$accessor};
+      $self->_accessor( $deprecated_accessors{$accessor}, @params );
+    };
+  }
+}
 
 ############################################################################
 # Class constructor.
 sub new {
   my ( $class, %params ) = @_;
-  my $self = bless {
-    index   => 1,
-    follow  => 1,
-    archive => 1,
-    odp     => 1,
-    ydir    => 1,
-    snippet => 1,
-  }, $class;
-  $self->index( $params{index} )     if exists $params{index};
-  $self->follow( $params{follow} )   if exists $params{follow};
-  $self->archive( $params{archive} ) if exists $params{archive};
-  $self->open_directory_project( $params{open_directory_project} )
-    if exists $params{open_directory_project};
-  $self->yahoo( $params{yahoo} )     if exists $params{yahoo};
-  $self->snippet( $params{snippet} ) if exists $params{snippet};
+  my $self = bless {}, $class;
+
+  # Setup property order.
+  $self->{order} = [qw( index follow archive odp ydir snippet )];
+
+  # Allow all properties by default.
+  $self->{props}->{$_} = 1 for @{ $self->{order} };
+
+  # Set properties configured by init parameters.
+  $self->$_( $params{$_} ) for grep { exists $self->{props}->{$_} } keys %params;
+
   return $self;
 }
 
 ############################################################################
-sub index { ## no critic (ProhibitBuiltinHomonyms)
-  my ( $self, $state ) = @_;
-  if ( $#_ >= 0 ) {
-    ## no critic (ProhibitLongChainsOfMethodCalls)
-    if ($state) {
-      $self->{index} = 1;
-      $self->follow(1)->archive(1)->open_directory_project(1)->yahoo(1)->snippet(1);
-    }
-    else {
-      $self->{index} = 0;
-      $self->follow(0)->archive(0)->open_directory_project(0)->yahoo(0)->snippet(0);
-    }
+# INTERNAL - Simple getter/setter for internal fields.
+sub _accessor {
+  my ( $self, $field, @params ) = @_;
+  if ( scalar @params ) {
+    $self->{props}->{$field} = $params[0] ? 1 : 0;
+    return $self;
   }
-  return $self;
+  return $self->{props}->{$field};
 }
 
 ############################################################################
-sub follow {
-  my ( $self, $state ) = @_;
-  $self->{follow} = $#_ >= 0 ? $state ? 1 : 0 : $self->{follow};
-  return $#_ >= 0 ? $self : $self->{follow};
-}
-
-############################################################################
-sub archive {
-  my ( $self, $state ) = @_;
-  $self->{archive} = $#_ >= 0 ? $state ? 1 : 0 : $self->{archive};
-  return $#_ >= 0 ? $self : $self->{archive};
-}
-
-############################################################################
-sub open_directory_project {
-  my ( $self, $state ) = @_;
-  $self->{odp} = $#_ >= 0 ? $state ? 1 : 0 : $self->{odp};
-  return $#_ >= 0 ? $self : $self->{odp};
-}
-
-############################################################################
-sub yahoo {
-  my ( $self, $state ) = @_;
-  $self->{ydir} = $#_ >= 0 ? $state ? 1 : 0 : $self->{ydir};
-  return $#_ >= 0 ? $self : $self->{ydir};
-}
-
-############################################################################
-sub snippet {
-  my ( $self, $state ) = @_;
-  $self->{snippet} = $#_ >= 0 ? $state ? 1 : 0 : $self->{snippet};
-  return $#_ >= 0 ? $self : $self->{snippet};
-}
-
-############################################################################
+# Return robots meta tag's content.
 sub content {
   my ($self) = @_;
-  return join ',',
-    map { $self->{$_} ? $_ : "no$_" } qw( index follow archive odp ydir snippet );
+  return join q{,}, map { $self->{props}->{$_} ? $_ : "no$_" } @{ $self->{order} };
 }
 
 ############################################################################
+# Return robots meta tag.
 sub meta {
   my ( $self, $no_xhtml ) = @_;
   if ( !$no_xhtml ) {
@@ -137,13 +135,13 @@ v0.1
     # Do not "allow" creation of google snippets and indexing by the Yahoo crawler.
     my $robots = HTML::Meta::Robots->new;
     $robots->snippet(0);
-    $robots->yahoo(0);
+    $robots->ydir(0);
     # on as one-liner:
-    $robots->snippet(0)->yahoo(0);
+    $robots->snippet(0)->ydir(0);
     
     # What is the indexing state of the Open Directory Project?
     my $robots = HTML::Meta::Robots->new;
-    printf "It's %s\n", $robots->open_directory_project ? 'allowed' : 'denied';
+    printf "It's %s\n", $robots->odp ? 'allowed' : 'denied';
 
 =head1 DESCRIPTION
 
@@ -164,22 +162,22 @@ Allows or denies any search engine to index the page.
 
 Allows or denies any search engine to follow links on the page.
 
-=item archive
+=item (no)archive
 
 Allows or denies the L<Internet Archive|http://www.archive.org/> to cache
 the page.
 
-=item odp
+=item (no)odp
 
 Allows or denies the L<Open Directory Project|http://www.dmoz.org/> search
 engine to index the page.
 
-=item ydir
+=item (no)ydir
 
 Allows or denies the L<Yahoo|http://www.yahoo.com/> search engine to index
 the page.
 
-=item snippet
+=item (no)snippet
 
 Allows or denies the L<Google|http://www.google.com/> search engine to
 display an abstract of the page and at the same time to cache the page.
@@ -189,7 +187,7 @@ display an abstract of the page and at the same time to cache the page.
 =head2 Why don't use Moo(se)?
 
 Yes, I could reduce a lot of the code by using Moo(se). However I decided to
-not use Moo(se) because of my own experience in "more strict" corporation.
+not use Moo(se) because of my own experience with "more strict" corporation.
 The problem is that some corporation have to review the code they use for
 security reasons including all dependencies. Some handlers require this in
 order to handle corporation data such as credit cards (PCI-DSS). Doing a
@@ -220,13 +218,13 @@ See L</"follow"> for details.
 
 See L</"archive"> for details.
 
-=item open_directory_project => (1|0)
+=item odp => (1|0)
 
-See L</"open_directory_project"> for details.
+See L</"odp"> for details.
 
-=item yahoo => (1|0)
+=item ydir => (1|0)
 
-See L</"yahoo"> for details.
+See L</"ydir"> for details.
 
 =item snippet => (1|0)
 
@@ -276,31 +274,31 @@ Get or set the archive state. For example:
     # Set follow state to deny:
     $robots->archive(0);
 
-=head2 open_directory_project
+=head2 odp
 
-Get or set the open_directory_project state. For example:
+Get or set the Open Directory Project state. For example:
 
     # Retrieve archive state:
-    my $state = $robots->open_directory_project;
+    my $state = $robots->odp;
     
     # Set open_directory_project state to allow:
-    $robots->open_directory_project(1);
+    $robots->odp(1);
     
     # Set open_directory_project state to deny:
-    $robots->open_directory_project(0);
+    $robots->odp(0);
 
-=head2 yahoo
+=head2 ydir
 
-Get or set the yahoo state. For example:
+Get or set the Yahoo state. For example:
 
     # Retrieve yahoo state:
-    my $state = $robots->yahoo;
+    my $state = $robots->ydir;
     
     # Set yahoo state to allow:
-    $robots->yahoo(1);
+    $robots->ydir(1);
     
     # Set yahoo state to deny:
-    $robots->yahoo(0);
+    $robots->ydir(0);
 
 =head2 snippet
 
@@ -336,9 +334,16 @@ L<GitHub Issue|https://github.com/burnersk/HTML-Meta-Robots/issues>, please.
 
 =over
 
-=item BURNERSK E<lt>L<burnersk@cpan.org|mailto:burnersk@cpan.org>E<gt>
+=item *
+
+L<BURNERSK|https://metacpan.org/author/BURNERSK> E<lt>L<burnersk@cpan.org|mailto:burnersk@cpan.org>E<gt>
 
 =back
+
+But there are more people who have contributed to HTML::Meta::Robots:
+
+L<HORNBURG|https://metacpan.org/author/HORNBURG>,
+L<MITHALDU|https://metacpan.org/author/MITHALDU>
 
 =head1 LICENSE AND COPYRIGHT
 

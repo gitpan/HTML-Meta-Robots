@@ -1,12 +1,12 @@
 ---
-abstract: "A simple HTML meta tag \"robots\" generator.\r"
+abstract: "A simple HTML meta tag \"robots\" generator."
 author:
   - 'BURNERSK <burnersk@cpan.org>'
 build_requires:
   Test::More: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.30
-dynamic_config: 0
+dynamic_config: 1
 generated_by: 'Dist::Zilla version 4.300030, CPAN::Meta::Converter version 2.120921'
 license: artistic_2
 meta-spec:
@@ -18,4 +18,9 @@ requires:
   utf8: 0
   version: 0.77
   warnings: 0
-version: 0.001
+resources:
+  bugtracker: https://github.com/burnersk/HTML-Meta-Robots/issues
+  homepage: http://p3rl.org/HTML::Meta::Robots
+  license: http://www.perlfoundation.org/artistic_license_2_0
+  repository: git://github.com/burnersk/HTML-Meta-Robots.git
+version: v0.2

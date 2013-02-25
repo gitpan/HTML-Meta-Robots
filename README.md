@@ -12,7 +12,12 @@ Report bugs and feature requests as a
 AUTHOR
 ------
 
-* BURNERSK <burnersk@cpan.org>
+* [BURNERSK](https://metacpan.org/author/BURNERSK) <burnersk@cpan.org>
+
+But there are more people who have contributed to HTML::Meta::Robots:
+
+[HORNBURG](https://metacpan.org/author/HORNBURG),
+[MITHALDU](https://metacpan.org/author/MITHALDU)
 
 LICENSE AND COPYRIGHT
 ---------------------
