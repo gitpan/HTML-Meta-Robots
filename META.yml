@@ -1,5 +1,5 @@
 ---
-abstract: "A simple HTML meta tag \"robots\" generator."
+abstract: "A simple HTML meta tag \"robots\" generator.\r"
 author:
   - 'BURNERSK <burnersk@cpan.org>'
 build_requires:
@@ -23,4 +23,4 @@ resources:
   homepage: http://p3rl.org/HTML::Meta::Robots
   license: http://www.perlfoundation.org/artistic_license_2_0
   repository: git://github.com/burnersk/HTML-Meta-Robots.git
-version: v0.2
+version: v0.3

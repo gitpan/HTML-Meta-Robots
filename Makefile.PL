@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "A simple HTML meta tag \"robots\" generator.",
+  "ABSTRACT" => "A simple HTML meta tag \"robots\" generator.\r",
   "AUTHOR" => "BURNERSK <burnersk\@cpan.org>",
   "BUILD_REQUIRES" => {
     "Test::More" => 0
@@ -27,7 +27,7 @@ my %WriteMakefileArgs = (
     "version" => "0.77",
     "warnings" => 0
   },
-  "VERSION" => "v0.2",
+  "VERSION" => "v0.3",
   "test" => {
     "TESTS" => "t/*.t"
   }

@@ -1,3 +1,4 @@
+## no critic (RequireVersion RequireExplicitPackage)
 ############################################################################
 # A simple HTML meta tag "robots" generator.
 # @copyright © 2013, BURNERSK. Some rights reserved.

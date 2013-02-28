@@ -9,7 +9,7 @@ package HTML::Meta::Robots;
 use strict;
 use warnings FATAL => 'all';
 use utf8;
-use version 0.77; our $VERSION = version->new('v0.2');
+use version 0.77; our $VERSION = version->new('v0.3');
 
 ############################################################################
 # Register accessor methods.
@@ -102,6 +102,17 @@ sub meta {
 }
 
 ############################################################################
+# Parses external robot meta tag content.
+sub parse {
+  my ( $self, $content ) = @_;
+  my %props = map { $_ =~ m/^(no)?(.+)$/s; $2 => $1 ? 0 : 1 } split /\s*,\s*/s, lc $content;
+  $self->index( delete( $props{index} ) // 1 );
+  $self->$_( delete $props{$_} ) for grep { exists $self->{props}->{$_} } keys %props;
+  $self->{unknown_props} = \%props if scalar keys %props;
+  return $self;
+}
+
+############################################################################
 1;
 __END__
 =pod
@@ -114,7 +125,7 @@ HTML::Meta::Robots - A simple HTML meta tag "robots" generator.
 
 =head1 VERSION
 
-v0.1
+v0.3
 
 =head1 SYNOPSIS
 
@@ -324,6 +335,15 @@ Returns the content part of an HTML robots meta tag. For example:
 Returns a string representing a full HTML robots meta tag. For example:
 
     printf '<html><head>%s</head></html>', $robots->meta;
+
+=head2 parse
+
+Returns the content part of an HTML robots meta tag. For example:
+
+    my $content = 'noindex,follow,archive,odp,ydir,snippet';
+    my $robots = HTML::Meta::Robots->new->parse($content);
+    printf "%s is %sed\n", 'index', $robots->index ? 'allow' : 'deny';
+    printf "%s is %sed\n", 'follow', $robots->follow ? 'allow' : 'deny';
 
 =head1 BUGS AND LIMITATIONS
 
