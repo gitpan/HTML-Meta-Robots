@@ -9,7 +9,7 @@ package HTML::Meta::Robots;
 use strict;
 use warnings FATAL => 'all';
 use utf8;
-use version 0.77; our $VERSION = version->new('v0.3');
+use version 0.77; our $VERSION = version->new('v0.3.1');
 
 ############################################################################
 # Register accessor methods.
@@ -365,10 +365,12 @@ But there are more people who have contributed to HTML::Meta::Robots:
 L<HORNBURG|https://metacpan.org/author/HORNBURG>,
 L<MITHALDU|https://metacpan.org/author/MITHALDU>
 
-=head1 LICENSE AND COPYRIGHT
+=head1 LICENSE
 
 HTML::Meta::Robots by BURNERSK is licensed under a
 L<Artistic 2.0 License|http://www.perlfoundation.org/artistic_license_2_0>.
+
+=head1 COPYRIGHT
 
 Copyright © 2013, BURNERSK. Some rights reserved.
 

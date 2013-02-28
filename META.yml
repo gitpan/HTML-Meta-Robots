@@ -13,6 +13,10 @@ meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: HTML-Meta-Robots
+provides:
+  HTML::Meta::Robots:
+    file: lib/HTML/Meta/Robots.pm
+    version: v0.3.1
 requires:
   strict: 0
   utf8: 0
@@ -23,4 +27,4 @@ resources:
   homepage: http://p3rl.org/HTML::Meta::Robots
   license: http://www.perlfoundation.org/artistic_license_2_0
   repository: git://github.com/burnersk/HTML-Meta-Robots.git
-version: v0.3
+version: v0.3.1
