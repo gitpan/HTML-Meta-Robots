@@ -9,7 +9,7 @@ package HTML::Meta::Robots;
 use strict;
 use warnings FATAL => 'all';
 use utf8;
-use version 0.77; our $VERSION = version->new('v0.3.1');
+use version 0.77; our $VERSION = version->new('v0.3.2');
 
 ############################################################################
 # Register accessor methods.
@@ -285,6 +285,10 @@ Get or set the archive state. For example:
     # Set follow state to deny:
     $robots->archive(0);
 
+=head2 open_directory_project
+
+DEPRECATED - See L</"odp">.
+
 =head2 odp
 
 Get or set the Open Directory Project state. For example:
@@ -297,6 +301,10 @@ Get or set the Open Directory Project state. For example:
     
     # Set open_directory_project state to deny:
     $robots->odp(0);
+
+=head2 yahoo
+
+DEPRECATED - See L</"odp">.
 
 =head2 ydir
 

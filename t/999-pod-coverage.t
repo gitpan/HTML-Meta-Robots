@@ -1,4 +1,4 @@
-## no critic (RequireVersion RequireExplicitPackage)
+## no critic (RequireVersion RequireExplicitPackage RequireCheckingReturnValueOfEval ProhibitStringyEval)
 ############################################################################
 # A simple HTML meta tag "robots" generator.
 # @copyright © 2013, BURNERSK. Some rights reserved.
@@ -11,13 +11,11 @@ use warnings FATAL => 'all';
 use utf8;
 
 ############################################################################
-# Get use of modules.
-use Test::More tests => 2;
-use Test::NoWarnings;
+use Test::More;
+plan skip_all => "Release tests are not enabled" if !$ENV{RELEASE_TESTING};
 
 ############################################################################
-# Tests for module inclusion.
-BEGIN { use_ok('HTML::Meta::Robots'); }
-
-############################################################################
-1;
+eval "use Test::Pod::Coverage 1.00";
+plan skip_all => "Test::Pod::Coverage 1.00 required for testing POD" if $@;
+all_pod_coverage_ok();
+done_testing();

@@ -12,7 +12,8 @@ use utf8;
 
 ############################################################################
 # Get use of modules.
-use Test::More tests => 17;
+use Test::More tests => 18;
+use Test::NoWarnings;
 use HTML::Meta::Robots;
 
 ############################################################################
